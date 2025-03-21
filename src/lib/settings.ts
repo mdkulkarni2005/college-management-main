@@ -1,0 +1,1 @@
+export const ITEM_PAR_PAGE = 10 
