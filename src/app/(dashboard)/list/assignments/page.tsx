@@ -7,7 +7,7 @@ import {
   role,
 } from "@/lib/data";
 import prisma from "@/lib/prisma";
-import { ITEM_PAR_PAGE } from "@/lib/settings";
+import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Assignment, Class, Prisma, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 
@@ -114,8 +114,8 @@ const AssignmentListPage = async ({
           }
         }
       }, 
-      take: ITEM_PAR_PAGE,
-      skip: ITEM_PAR_PAGE * (p - 1),
+      take: ITEM_PER_PAGE,
+      skip: ITEM_PER_PAGE * (p - 1),
     }),
     prisma.assignment.count({where: query}),
   ]);

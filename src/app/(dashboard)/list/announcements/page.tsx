@@ -4,7 +4,7 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { announcementsData, role } from "@/lib/data";
 import prisma from "@/lib/prisma";
-import { ITEM_PAR_PAGE } from "@/lib/settings";
+import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Announcement, Class, Prisma } from "@prisma/client";
 import Image from "next/image";
 
@@ -80,8 +80,8 @@ const AnnouncementListPage = async ({
       include: {
         class: true,
       },
-      take: ITEM_PAR_PAGE,
-      skip: ITEM_PAR_PAGE * (p - 1),
+      take: ITEM_PER_PAGE,
+      skip: ITEM_PER_PAGE * (p - 1),
     }),
     prisma.announcement.count({ where: query }),
   ]);

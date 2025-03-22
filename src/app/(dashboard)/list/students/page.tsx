@@ -4,7 +4,7 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { role, studentsData } from "@/lib/data";
 import prisma from "@/lib/prisma";
-import { ITEM_PAR_PAGE } from "@/lib/settings";
+import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Class } from "@prisma/client";
 import { Student } from "@prisma/client";
 import { Prisma } from "@prisma/client";
@@ -122,8 +122,8 @@ const StudentListPage = async ({
       include: {
         class: true,
       },
-      take: ITEM_PAR_PAGE,
-      skip: ITEM_PAR_PAGE * (p - 1),
+      take: ITEM_PER_PAGE,
+      skip: ITEM_PER_PAGE * (p - 1),
     }),
     prisma.student.count({where: query}),
   ]);
