@@ -5,16 +5,10 @@ import TableSearch from "@/components/TableSearch";
 import { eventsData, role } from "@/lib/data";
 import prisma from "@/lib/prisma";
 import { ITEM_PAR_PAGE } from "@/lib/settings";
+import { Class, Event, Prisma } from "@prisma/client";
 import Image from "next/image";
 
-type Event = {
-  id: number;
-  title: string;
-  class: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-};
+type EventList = Event & { class: Class };
 
 const columns = [
   {
@@ -46,16 +40,28 @@ const columns = [
   },
 ];
 
-const renderRow = (item: Event) => (
+const renderRow = (item: EventList) => (
   <tr
     key={item.id}
     className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
   >
     <td className="flex items-center gap-4 p-4">{item.title}</td>
-    <td>{item.class}</td>
-    <td className="hidden md:table-cell">{item.date}</td>
-    <td className="hidden md:table-cell">{item.startTime}</td>
-    <td className="hidden md:table-cell">{item.endTime}</td>
+    <td>{item.class.name}</td>
+    <td className="hidden md:table-cell">
+      {new Intl.DateTimeFormat("en-IN").format(item.startTime)}
+    </td>
+    <td className="hidden md:table-cell">
+      {item.startTime.toLocaleTimeString("en-IN", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      })}
+    </td>
+    <td className="hidden md:table-cell">{item.endTime.toLocaleTimeString("en-IN", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      })}</td>
     <td>
       <div className="flex items-center gap-2">
         {role === "admin" && (
@@ -77,30 +83,18 @@ const EventListPage = async ({
   const { page, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
 
-  const query: Prisma.AssignmentWhereInput = {};
+  const query: Prisma.EventWhereInput = {};
 
   if (queryParams) {
     for (const [key, value] of Object.entries(queryParams)) {
       if (value !== undefined)
         switch (key) {
-          case "classId":
-            query.lesson = { classId: parseInt(value) }
-              break
-            case "teacherId":
-              query.lesson = {
-                teacherId: value,
-              }
-              break;
-            case "search":
-              query.lesson = {
-                subject :{
-                  name:{contains: value, mode: "insensitive"}
-                }
-              }
-              break;
-              default:
-                break
-        }
+          case "search":
+            query.title = { contains: value, mode: "insensitive" };
+            break;
+          default:
+            break;
+        } 
     }
   }
 
@@ -108,18 +102,12 @@ const EventListPage = async ({
     prisma.event.findMany({
       where: query,
       include: {
-        lesson: {
-          select: {
-            subject: {select: {name: true}},
-            class: {select: {name: true}},
-            teacher: {select: {name: true, surname: true}},
-          }
-        }
-      }, 
+        class: true,
+      },
       take: ITEM_PAR_PAGE,
       skip: ITEM_PAR_PAGE * (p - 1),
     }),
-    prisma.event.count({where: query}),
+    prisma.event.count({ where: query }),
   ]);
 
   return (
@@ -141,9 +129,9 @@ const EventListPage = async ({
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={eventsData} />
+      <Table columns={columns} renderRow={renderRow} data={data} />
       {/* PAGINATION */}
-      <Pagination />
+      <Pagination page={p} count={count} />
     </div>
   );
 };
