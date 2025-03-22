@@ -2,9 +2,24 @@
 
 import * as Clerk from "@clerk/elements/common";
 import * as SignIn from "@clerk/elements/sign-in";
+import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const LoginPage = () => {
+
+    const { isLoaded, isSignedIn, user } = useUser()
+    const router = useRouter()
+
+    useEffect(() => {
+        const role = user?.publicMetadata.role
+
+        if(role) {
+            router.push(`/${role}`)
+        } 
+    },[user, router])
+
   return (
     <div className="h-screen flex items-center justify-center bg-lamaSkyLight">
       <SignIn.Root>
@@ -29,7 +44,7 @@ const LoginPage = () => {
             <Clerk.Input type="password" required className="p-2 rounded-md ring-1 ring-gray-300" />
             <Clerk.FieldError className="text-xs text-red-400" />
           </Clerk.Field>
-          <SignIn.Action submit className="bg-blue-500 text-white my-1 rounded-md text-sm p-[10px ]">Sign In</SignIn.Action>
+          <SignIn.Action submit className="bg-blue-500 text-white my-1 rounded-md text-sm p-[10px]">Sign In</SignIn.Action>
         </SignIn.Step>
       </SignIn.Root>
     </div>
