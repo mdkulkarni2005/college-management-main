@@ -52,17 +52,17 @@ const renderRow = (item: EventList) => (
     <td className="flex items-center gap-4 p-4">{item.title}</td>
     <td>{item.class?.name || "_"}</td>
     <td className="hidden md:table-cell">
-      {new Intl.DateTimeFormat("en-IN").format(item.startTime)}
+      {new Intl.DateTimeFormat("en-US").format(item.startTime)}
     </td>
     <td className="hidden md:table-cell">
-      {item.startTime.toLocaleTimeString("en-IN", {
+      {item.startTime.toLocaleTimeString("en-US", {
         hour: "2-digit",
         minute: "2-digit",
         hour12: false,
       })}
     </td>
     <td className="hidden md:table-cell">
-      {item.endTime.toLocaleTimeString("en-IN", {
+      {item.endTime.toLocaleTimeString("en-US", {
         hour: "2-digit",
         minute: "2-digit",
         hour12: false,
