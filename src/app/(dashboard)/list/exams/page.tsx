@@ -1,12 +1,12 @@
-import FormModal from "@/components/FormModal";
+import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { currentUserId, role } from "@/lib/utils";
 import { Class, Exam, Prisma, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
+import { auth } from "@clerk/nextjs/server";
 
 type ExamList = Exam & {
   lesson: {
@@ -15,6 +15,17 @@ type ExamList = Exam & {
     teacher: Teacher;
   };
 };
+
+const ExamListPage = async ({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | undefined };
+}) => {
+
+const { userId, sessionClaims } = auth();
+const role = (sessionClaims?.metadata as { role?: string })?.role;
+const currentUserId = userId;
+
 
 const columns = [
   {
@@ -62,8 +73,8 @@ const renderRow = (item: ExamList) => (
       <div className="flex items-center gap-2">
         {(role === "admin" || role === "teacher") && (
           <>
-            <FormModal table="exam" type="update" data={item} />
-            <FormModal table="exam" type="delete" id={item.id} />
+            <FormContainer table="exam" type="update" data={item} />
+            <FormContainer table="exam" type="delete" id={item.id} />
           </>
         )}
       </div>
@@ -71,21 +82,18 @@ const renderRow = (item: ExamList) => (
   </tr>
 );
 
-const ExamListPage = async ({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | undefined };
-}) => {
   const { page, ...queryParams } = searchParams;
+
   const p = page ? parseInt(page) : 1;
+
+  // URL PARAMS CONDITION
 
   const query: Prisma.ExamWhereInput = {};
 
   query.lesson = {};
-
   if (queryParams) {
     for (const [key, value] of Object.entries(queryParams)) {
-      if (value !== undefined)
+      if (value !== undefined) {
         switch (key) {
           case "classId":
             query.lesson.classId = parseInt(value);
@@ -101,8 +109,11 @@ const ExamListPage = async ({
           default:
             break;
         }
+      }
     }
   }
+
+  // ROLE CONDITIONS
 
   switch (role) {
     case "admin":
@@ -112,17 +123,22 @@ const ExamListPage = async ({
       break;
     case "student":
       query.lesson.class = {
-        students: { some: { id: currentUserId! } },
+        students: {
+          some: {
+            id: currentUserId!,
+          },
+        },
       };
       break;
-      case "parent":
-        query.lesson.class = {
-          students: {
-            some:{
-              parentId: currentUserId!
-            }
-          }
-        }
+    case "parent":
+      query.lesson.class = {
+        students: {
+          some: {
+            parentId: currentUserId!,
+          },
+        },
+      };
+      break;
 
     default:
       break;
@@ -135,8 +151,8 @@ const ExamListPage = async ({
         lesson: {
           select: {
             subject: { select: { name: true } },
-            class: { select: { name: true } },
             teacher: { select: { name: true, surname: true } },
+            class: { select: { name: true } },
           },
         },
       },
@@ -160,7 +176,9 @@ const ExamListPage = async ({
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
-            {(role === "admin" || role === "teacher") && <FormModal table="exam" type="create" />}
+            {(role === "admin" || role === "teacher") && (
+              <FormContainer table="exam" type="create" />
+            )}
           </div>
         </div>
       </div>

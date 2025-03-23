@@ -117,11 +117,9 @@ const menuItems = [
   },
 ];
 
-const Menu = async() => {
-
-  const user = await currentUser()
-  const role = user?.publicMetadata.role as string
-
+const Menu = async () => {
+  const user = await currentUser();
+  const role = user?.publicMetadata.role as string;
   return (
     <div className="mt-4 text-sm">
       {menuItems.map((i) => (

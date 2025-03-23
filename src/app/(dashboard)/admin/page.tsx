@@ -1,12 +1,11 @@
 import Announcements from "@/components/Announcements";
 import AttendanceChartContainer from "@/components/AttendanceChartContainer";
-import CounterChartContainer from "@/components/CountChartContainer";
-import EventCalendar from "@/components/EventCalendar";
+import CountChartContainer from "@/components/CountChartContainer";
 import EventCalendarContainer from "@/components/EventCalendarContainer";
 import FinanceChart from "@/components/FinanceChart";
 import UserCard from "@/components/UserCard";
 
-const AdminPage = async ({
+const AdminPage = ({
   searchParams,
 }: {
   searchParams: { [keys: string]: string | undefined };
@@ -26,7 +25,7 @@ const AdminPage = async ({
         <div className="flex gap-4 flex-col lg:flex-row">
           {/* COUNT CHART */}
           <div className="w-full lg:w-1/3 h-[450px]">
-            <CounterChartContainer />
+            <CountChartContainer />
           </div>
           {/* ATTENDANCE CHART */}
           <div className="w-full lg:w-2/3 h-[450px]">
@@ -40,7 +39,7 @@ const AdminPage = async ({
       </div>
       {/* RIGHT */}
       <div className="w-full lg:w-1/3 flex flex-col gap-8">
-        <EventCalendarContainer searchParams={searchParams} />
+        <EventCalendarContainer searchParams={searchParams}/>
         <Announcements />
       </div>
     </div>

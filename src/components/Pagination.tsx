@@ -19,7 +19,9 @@ const Pagination = ({ page, count }: { page: number; count: number }) => {
       <button
         disabled={!hasPrev}
         className="py-2 px-4 rounded-md bg-slate-200 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-        onClick={() => changePage(page - 1)}
+        onClick={() => {
+          changePage(page - 1);
+        }}
       >
         Prev
       </button>
@@ -34,7 +36,9 @@ const Pagination = ({ page, count }: { page: number; count: number }) => {
                 className={`px-2 rounded-sm ${
                   page === pageIndex ? "bg-lamaSky" : ""
                 }`}
-                onClick={() => changePage(pageIndex)}
+                onClick={() => {
+                  changePage(pageIndex);
+                }}
               >
                 {pageIndex}
               </button>
@@ -43,9 +47,11 @@ const Pagination = ({ page, count }: { page: number; count: number }) => {
         )}
       </div>
       <button
-        disabled={!hasNext}
         className="py-2 px-4 rounded-md bg-slate-200 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-        onClick={() => changePage(page + 1)}
+        disabled={!hasNext}
+        onClick={() => {
+          changePage(page + 1);
+        }}
       >
         Next
       </button>
